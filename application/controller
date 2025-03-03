@@ -1,0 +1,98 @@
+	<?php
+
+class Customer extends CI_Controller{
+
+	function __construct(){
+
+		parent::__construct();
+		$this->load->model('Customer_model');
+	}
+
+	function index(){
+
+		$data['title']='Data Customer';
+		$data['customer'] = $this->Customer_model->getData();
+		$this->load->view('header',$data);
+		$this->load->view('customer/data');
+		$this->load->view('footer');
+	} //ok 
+
+
+	function add(){
+		$data['title']='Data Customer - Add';
+		$this->load->view('header',$data);
+		$this->load->view('customer/add');
+		$this->load->view('footer');
+	}
+
+	function insert(){
+	    $ref_sekolah = $this->input->post('ref_sekolah');
+		$nama_lengkap = $this->input->post('nama_lengkap');
+		$nik = $this->input->post('nik');
+
+		
+		$tlp = $this->input->post('tlp');
+		$alamat= $this->input->post('alamat');
+		$password = $this->input->post('password');
+	
+
+		$passwordCrypt = sha1($password);
+            
+            $sql="INSERT INTO member(ref_sekolah,nama_lengkap,nik,tlp,alamat,password) VALUES(
+                   '$ref_sekolah', 
+                   '$nama_lengkap', 
+                   '$nik', 
+                   '$tlp', 
+                   '$alamat', 
+                    '$passwordCrypt'
+                )";
+		
+		if($this->db->query($sql)){
+		    redirect('customer');
+		}
+	}
+
+	function delete(){
+		$id = $this->uri->segment(3);
+		$this->Customer_model->delete($id);
+		redirect('customer');
+	}
+
+	function edit(){
+
+		$id	= $this->uri->segment(3);
+
+		$data['title']='Data Customer- Edit';
+		$hasil = $this->Customer_model->getId($id);
+
+		$data['customer'] = $hasil->row_array();
+
+		$this->load->view('header',$data);
+		$this->load->view('customer/edit',$data);
+		$this->load->view('footer');
+	}
+
+	function detail(){
+		$id	= $this->uri->segment(3);
+		$data['title']='Data Customer- Detail';
+		$hasil = $this->Customer_model->getId($id);
+
+		$data['customer'] = $hasil->row_array();
+
+		$this->load->view('header',$data);
+		$this->load->view('customer/view',$data);
+		$this->load->view('footer');
+	}
+
+
+
+	function update(){
+		$id = $this->input->post('id');
+		$nama_lengkap = $this->input->post('nama_lengkap');
+		$username = $this->input->post('username');
+		$password = $this->input->post('password');
+		$level = $this->input->post('level');
+		$this->Customer_model->update($id,$nama_lengkap,$username,$password,$level);
+		redirect('customer');
+	}
+}
