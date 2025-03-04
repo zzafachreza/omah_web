@@ -5,8 +5,13 @@ $hasilCom = $this->db->query($sqlCom);
 $comp = $hasilCom->row_object();
 
 $jumlah = $this->db->query("SELECT (SELECT COUNT(*) FROM data_pengguna) AS pengguna,
-  (SELECT COUNT(*) FROM data_pengguna) AS sewa,
-  (SELECT COUNT(*) FROM data_pengguna) AS kendaraan;")->row_object();
+  (SELECT COUNT(*) FROM data_destinasi) AS a,
+  (SELECT COUNT(*) FROM data_umkm) AS b,
+  (SELECT COUNT(*) FROM data_kuliner) AS c,
+  (SELECT COUNT(*) FROM data_sewa) AS d,
+  (SELECT COUNT(*) FROM data_panduan) AS e
+
+  ")->row_object();
 
 
                     
@@ -45,55 +50,81 @@ $jumlah = $this->db->query("SELECT (SELECT COUNT(*) FROM data_pengguna) AS pengg
 <div class="container" style="padding-top: 2%">
     
     <div class="row">
-        <div class="col-sm-4 box">
-            
-            <div class="box-detail">
-                
-                <div class="row align-items-center" style="height:100%">
-                    <div class="col-sm-7">
-                        <p class="box-title">Data Pengguna</p>
-                        <p class="box-count"><?php echo $jumlah->pengguna ?></p>
-                    </div>
-                    <div class="col-sm-5">
-                         <center>
-                             <img  src="<?php echo site_url('assets/images/user.png') ?>" width="75%" />
-                         </center>
-                    </div>
-                </div>
-               
-            </div>
-            
-        </div>
-         <div class="col-sm-4 box">
-             <div class="box-detail">
-                <div class="row align-items-center" style="height:100%">
-                    <div class="col-sm-7 ">
-                        <p class="box-title">Data Biaya Sewa</p>
-                        <p class="box-count"><?php echo $jumlah->kendaraan ?></p>
-                    </div>
-                    <div class="col-sm-5">
-                         <center>
-                             <img  src="<?php echo site_url('assets/images/kendaraan.png') ?>" width="75%" />
-                         </center>
+            <div class="col-md-4" style="margin-bottom:2%">
+                <div class="card">
+                    <div class="card-body">
+                        <table><tr><td>
+                                    <h5 class="card-title">Destinasi Wisata</h5>
+                                    <p class="card-text" style="font-size: 30px;font-weight: bold;"><?php echo $jumlah->a ?></p>
+                                </td><td width="30%"> 
+                                    <img src="<?php echo site_url('assets/images/icon_menu1.png') ?>" class="card-img-top" alt="Image 1">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
-        </div>
-         <div class="col-sm-4 box">
-             <div class="box-detail">
-                <div class="row align-items-center" style="height:100%">
-                    <div class="col-sm-7 ">
-                        <p class="box-title">Data Sewa</p>
-                        <p class="box-count"><?php echo $jumlah->sewa ?></p>
-                    </div>
-                    <div class="col-sm-5">
-                         <center>
-                             <img  src="<?php echo site_url('assets/images/sewa.png') ?>" width="75%" />
-                         </center>
+            <div class="col-md-4" style="margin-bottom:2%">
+                <div class="card">
+                    <div class="card-body">
+                        <table><tr><td>
+                                    <h5 class="card-title">Oleh-Oleh UMKM</h5>
+                                    <p class="card-text" style="font-size: 30px;font-weight: bold;"><?php echo $jumlah->b ?></p>
+                                </td><td width="30%"> 
+                                    <img src="<?php echo site_url('assets/images/icon_menu2.png') ?>" class="card-img-top" alt="Image 1">
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
+            <div class="col-md-4" style="margin-bottom:2%">
+                <div class="card">
+                    <div class="card-body">
+                        <table><tr><td>
+                                    <h5 class="card-title">Rekomendasi Kuliner</h5>
+                                    <p class="card-text" style="font-size: 30px;font-weight: bold;"><?php echo $jumlah->c ?></p>
+                                </td><td width="30%"> 
+                                    <img src="<?php echo site_url('assets/images/icon_menu3.png') ?>" class="card-img-top" alt="Image 1">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8" style="margin-bottom:2%">
+                <div class="card">
+                    <div class="card-body">
+                        <table><tr><td>
+                                    <h5 class="card-title">Sewa Transport & Penginapan</h5>
+                                    <p class="card-text" style="font-size: 30px;font-weight: bold;"><?php echo $jumlah->d ?></p>
+                                </td><td width="12%"> 
+                                    <img src="<?php echo site_url('assets/images/icon_menu4.png') ?>" class="card-img-top" alt="Image 1">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-md-4" style="margin-bottom:2%">
+                <div class="card">
+                    <div class="card-body">
+                        <table><tr><td>
+                                    <h5 class="card-title">Info Panduan Wisata</h5>
+                                    <p class="card-text" style="font-size: 30px;font-weight: bold;"><?php echo $jumlah->e ?></p>
+                                </td><td width="30%"> 
+                                    <img src="<?php echo site_url('assets/images/icon_menu6.png') ?>" class="card-img-top" alt="Image 1">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+
+           
         </div>
-    </div>
 </div>
 
