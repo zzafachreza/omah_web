@@ -14,13 +14,194 @@ class Api extends CI_Controller{
 
 
 
-function produk(){
+function rating_add(){
+
+     $data = json_decode(file_get_contents('php://input'), true);
+     
+     $fid_pengguna = $data['fid_pengguna'];
+     $modul = $data['modul'];
+     $fid_modul = $data['fid_modul'];
+     $nilai = $data['nilai'];
+     $keterangan = $data['keterangan'];
+
+    $sql= "INSERT INTO data_rating(tanggal,jam,fid_pengguna, modul,fid_modul,nilai,keterangan) VALUES (
+
+        NOW(),
+        NOW(),
+        '$fid_pengguna',
+        '$modul',
+        '$fid_modul',
+        '$nilai',
+        '$keterangan'
+    )";
+
+    if( $this->db->query($sql)){
+ 
+          echo json_encode(array("status"=>200,"message"=>"Ulasan berhasil disimpan !"));
+    }
+    
+
+}
+
+function rating(){
+      $data = json_decode(file_get_contents('php://input'), true);
+     
+     $fid_pengguna = $data['fid_pengguna'];
+     $modul = $data['modul'];
+     $fid_modul = $data['fid_modul'];
+      $sql="SELECT * FROM data_rating a JOIN data_pengguna b ON a.fid_pengguna = b.id_pengguna WHERE fid_pengguna='$fid_pengguna' AND modul='$modul' AND fid_modul='$fid_modul' ORDER BY id_rating*1 DESC";
+
+     $arr = $this->db->query($sql)->result();
+    echo json_encode($arr);
+
+
+}
+
+function rating_delete(){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id_rating=$data['id_rating'];
+
+    $sql="DELETE FROM data_rating WHERE id_rating='$id_rating'";
+
+      if( $this->db->query($sql)){
+ 
+          echo json_encode(array("status"=>200,"message"=>"Ulasan berhasil dihapus !"));
+    }
+    
+}
+
+
+function pengalaman_delete(){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id_pengalaman=$data['id_pengalaman'];
+
+    $sql="DELETE FROM data_pengalaman WHERE id_pengalaman='$id_pengalaman'";
+
+      if( $this->db->query($sql)){
+ 
+          echo json_encode(array("status"=>200,"message"=>"Pengalaman berhasil dihapus !"));
+    }
+
+}
+function panduan(){
     header('Content-Type: application/json');
     
-    $arr = $this->db->query("SELECT * FROM data_produk")->result();
+    $arr = $this->db->query("SELECT * FROM data_panduan")->result();
     echo json_encode($arr);
  }
 
+
+ function destinasi(){
+    header('Content-Type: application/json');
+    
+    $arr = $this->db->query("SELECT *,
+        (SELECT AVG(nilai) FROM data_rating WHERE modul='destinasi' AND fid_modul=a.id_destinasi ) ratarating,
+        (SELECT COUNT(*) FROM data_rating WHERE modul='destinasi' AND fid_modul=a.id_destinasi ) jumlahrating 
+
+        FROM data_destinasi a")->result();
+    echo json_encode($arr);
+ }
+
+
+  function umkm(){
+    header('Content-Type: application/json');
+
+    $MODUL = 'umkm';
+    
+    $arr = $this->db->query("SELECT *,
+        (SELECT AVG(nilai) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) ratarating,
+        (SELECT COUNT(*) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) jumlahrating 
+
+        FROM data_$MODUL a")->result();
+    echo json_encode($arr);
+ }
+
+
+  function kuliner(){
+    header('Content-Type: application/json');
+
+    $MODUL = 'kuliner';
+    
+    $arr = $this->db->query("SELECT *,
+        (SELECT AVG(nilai) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) ratarating,
+        (SELECT COUNT(*) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) jumlahrating 
+
+        FROM data_$MODUL a")->result();
+    echo json_encode($arr);
+ }
+
+
+   function sewa(){
+    header('Content-Type: application/json');
+
+    $MODUL = 'sewa';
+    
+    $arr = $this->db->query("SELECT *,
+        (SELECT AVG(nilai) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) ratarating,
+        (SELECT COUNT(*) FROM data_rating WHERE modul='$MODUL' AND fid_modul=a.id_$MODUL ) jumlahrating 
+
+        FROM data_$MODUL a")->result();
+    echo json_encode($arr);
+ }
+
+
+
+function pengalaman(){
+    header('Content-Type: application/json');
+    
+    $arr = $this->db->query("SELECT * FROM data_pengalaman a JOIN data_pengguna b ON a.fid_pengguna = b.id_pengguna")->result();
+    echo json_encode($arr);
+ }
+
+
+function tambah_pengalaman(){
+    $data = json_decode(file_get_contents('php://input'), true);
+    
+        $foto_user = $data['gambar'];
+        $fid_pengguna = $data['id_pengguna'];
+        
+        
+        if(strlen($foto_user) > 250){
+              
+            
+                $path_user = sha1(date('ymdhis'))."_experience.png";
+                list($foto_user, $foto_user) = explode(';base64', $foto_user);
+                list(, $foto_user) = explode(',', $foto_user);
+                $foto_user = base64_decode($foto_user);
+                file_put_contents('./datafoto/'.$path_user, $foto_user);
+                $input_user = site_url().'datafoto/'.$path_user;
+                
+             
+                
+        }else{
+            $input_user = $data['file_pengguna'];
+        }
+    
+        
+        $link_youtube = $data['link_youtube'];
+        $deskripsi = $data['deskripsi'];
+        
+        
+        $sql="INSERT INTO data_pengalaman(gambar,link_youtube,deskripsi,fid_pengguna) VALUES (
+
+                '$input_user',
+                '$link_youtube',
+                '$deskripsi',
+                '$fid_pengguna'
+
+            )";
+       
+       
+       $this->db->query($sql);
+       
+ 
+          echo json_encode(array("status"=>200,"message"=>"Pengalaman berhasil disimpan !"));
+    
+
+     
+        
+      
+}
 
  function santri(){
     $data = json_decode(file_get_contents('php://input'), true);
@@ -1191,16 +1372,15 @@ function soal(){
 function login(){
         $data = json_decode(file_get_contents('php://input'), true);
 
-        $company = $this->db->query("SELECT * FROM data_company limit 1")->row_object();
-        $kode_akses = $company->kode_akses;
+      
         if($data['api_token']==$this->api_token()){
             // /your code fill here
         
-        $telepon = $data['telepon'];
-        // $password = sha1($data['password']);
+        $username = $data['username'];
+        $password = sha1($data['password']);
 
 
-        $sql="SELECT *,(SELECT berat_badan FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) berat,(SELECT tinggi_badan FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) tinggi,(SELECT imt FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) imt,(SELECT hasil FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) hasil FROM data_pengguna a  WHERE telepon='$telepon'";
+        $sql="SELECT * FROM data_pengguna WHERE username='$username' AND password='$password'";
  
 
              
@@ -1208,19 +1388,17 @@ function login(){
             
             if($cek > 0){
                      
-                if($data['password']==$kode_akses){
+              
                     $arr = $this->db->query($sql)->row_array();
-                     $this->db->query("DELETE FROM data_nonton WHERE fid_pengguna='".$arr['id_pengguna']."'");
+                     
                     echo json_encode(array("status"=>200,"message"=>"success","data"=>$arr));
-                }else{
-                    echo json_encode(array("status"=>404,"message"=>"Kode Akses salah !"));
-                }
+            
            
             }else{
                
                
                
-                echo json_encode(array("status"=>404,"message"=>"Telepon atau Kode Akses salah !"));
+                echo json_encode(array("status"=>404,"message"=>"Username atau kata sandi salah !"));
             }
             
             
@@ -1285,70 +1463,30 @@ function rekap_insert(){
 
         $data = json_decode(file_get_contents('php://input'), true);
 
-          $company = $this->db->query("SELECT * FROM data_company limit 1")->row_object();
-        $kode_akses = $company->kode_akses;
 
 
-        if($kode_akses !== $data['password']){
-             echo json_encode(array("status"=>404,"message"=>"Kode Akses salah !"));
-             die();
-        }else{
-
-
+      
             if($data['api_token']==$this->api_token()){
-
-
-                     $nama = $data['nama'];
-                    $jenis_kelamin = $data['jenis_kelamin'];
-                    $tanggal_lahir = $data['tanggal_lahir'];
-                    $email = $data['email'];
+                    $nama_lengkap = $data['nama_lengkap'];
                     $telepon = $data['telepon'];
-                    $tinggi_badan = $data['tinggi_badan'];
-                    $berat_badan = $data['berat_badan'];
-                    $imt = $data['imt'];
-                    $hasil = $data['hasil'];
-                    $tipe = $data['tipe'];
-
-
-
-                 
-                    $password = $data['password'];
+                    $username = $data['username'];
+                    $password = sha1($data['password']);
                     
-                    
-                    
-                    
-                    
-
-                 
-                   
-                        
-
-                
-                
                 
                          $sql="INSERT INTO data_pengguna(
                                 
-                                nama,
-                                jenis_kelamin,
-                                tanggal_lahir,
-                                email,
+                                nama_lengkap,
                                 telepon,
-                                tinggi_badan,
-                                berat_badan,
-                                tipe,
+                                username,
+                               
 
                                 password
                                 
                         
                         ) VALUES(
-                        '$nama',
-                        '$jenis_kelamin',
-                        '$tanggal_lahir',
-                        '$email',
+                        '$nama_lengkap',
                         '$telepon',
-                        '$tinggi_badan',
-                        '$berat_badan',
-                        '$tipe',      
+                        '$username',
                         '$password'
                         
                         )";
@@ -1356,20 +1494,17 @@ function rekap_insert(){
                   
                          
                          
-                         $cek=$this->db->query("SELECT * FROM data_pengguna WHERE telepon='$telepon'")->num_rows();
+                         $cek=$this->db->query("SELECT * FROM data_pengguna WHERE username='$username'")->num_rows();
                         
                         if($cek > 0){
-                            echo json_encode(array("status"=>404,"message"=>"Telepon sudah terdaftar !"));
+                            echo json_encode(array("status"=>404,"message"=>"Username sudah terdaftar !"));
                             
                         }else{
 
                           if($this->db->query($sql)){
-                             $fid_pengguna = $this->db->query("SELECT * FROM data_pengguna WHERE telepon='$telepon'")->row_object()->id_pengguna;
+                         
 
-                               $sqlIMT = "INSERT INTO data_imt(fid_pengguna,tanggal,berat_badan,tinggi_badan,imt,hasil) VALUES('$fid_pengguna',NOW(),'$berat_badan','$tinggi_badan','$imt','$hasil')";
-                                   $this->db->query($sqlIMT);
-
-                                      $arr = $this->db->query("SELECT * FROM data_pengguna WHERE id_pengguna='$fid_pengguna'")->row_array();
+                                              $arr = $this->db->query("SELECT * FROM data_pengguna WHERE username='$username'")->row_array();
 
 
                                echo json_encode(array("status"=>200,"message"=>"Selamat, Kamu berhasil mendaftar !","data"=>$arr));
@@ -1388,7 +1523,7 @@ function rekap_insert(){
                     }
 
 
-        }
+        
        
         
         
@@ -1413,15 +1548,9 @@ function company(){
 	function slider(){
 	    $data = json_decode(file_get_contents('php://input'), true);
     
-    $posisi = $data['posisi'];
-    $tipe = $data['tipe'];
-
-    if(!empty($tipe)){
-        $sql="SELECT * FROM data_slider WHERE posisi='$posisi' AND tipe='$tipe'";
-    }else{
-        $sql="SELECT * FROM data_slider WHERE posisi='$posisi'";    
-    }
-    
+ 
+        $sql="SELECT * FROM data_slider";
+ 
     $arr = $this->db->query($sql)->result();
     echo json_encode($arr);
 
@@ -1933,6 +2062,7 @@ function order_add(){
 }
 
 // UPDATE PROFILE
+// UPDATE PROFILE
 function update_profile(){
     $data = json_decode(file_get_contents('php://input'), true);
     
@@ -1967,13 +2097,10 @@ function update_profile(){
         $id = $data['id_pengguna'];
         
      
-         $nama = $data['nama'];
-        $jenis_kelamin = $data['jenis_kelamin'];
-        $tanggal_lahir = $data['tanggal_lahir'];
-        $email = $data['email'];
+         $nama_lengkap = $data['nama_lengkap'];
+        $username = $data['username'];
         $telepon = $data['telepon'];
-        $tinggi_badan = $data['tinggi_badan'];
-        $berat_badan = $data['berat_badan'];
+      
        
 
         if(!empty($data['newpassword'])){
@@ -1982,13 +2109,9 @@ function update_profile(){
              $sql="UPDATE data_pengguna SET 
 
 
-                nama='$nama',
-                jenis_kelamin='$jenis_kelamin',
-                tanggal_lahir='$tanggal_lahir',
-                email='$email',
-                telepon='$telepon',
-                tinggi_badan='$tinggi_badan',
-                berat_badan='$berat_badan',
+                nama_lengkap='$nama_lengkap',
+                username='$username',
+                telepon='$telepon'
 
 
              password='$password',file_pengguna='$input_user' WHERE id_pengguna='$id'";
@@ -1996,13 +2119,9 @@ function update_profile(){
             
         }else{
             $sql="UPDATE data_pengguna SET  
-            nama='$nama',
-            jenis_kelamin='$jenis_kelamin',
-            tanggal_lahir='$tanggal_lahir',
-            email='$email',
-            telepon='$telepon',
-            tinggi_badan='$tinggi_badan',
-            berat_badan='$berat_badan',
+                nama_lengkap='$nama_lengkap',
+                username='$username',
+                telepon='$telepon',
 
             file_pengguna='$input_user' WHERE id_pengguna='$id'";
         }
@@ -2010,7 +2129,7 @@ function update_profile(){
        
        $this->db->query($sql);
        
-         $sqlHasil="SELECT *,(SELECT berat_badan FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) berat,(SELECT tinggi_badan FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) tinggi,(SELECT imt FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) imt,(SELECT hasil FROM data_imt WHERE fid_pengguna=a.id_pengguna ORDER BY tanggal DESC limit 1) hasil FROM data_pengguna a  WHERE a.id_pengguna='$id' limit 1";
+         $sqlHasil="SELECT * FROM data_pengguna a  WHERE a.id_pengguna='$id' limit 1";
           $arr = $this->db->query($sqlHasil)->row_array();
           echo json_encode(array("status"=>200,"message"=>"Profile berhasil di update !","data"=>$arr));
     
