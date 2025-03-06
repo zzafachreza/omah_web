@@ -49,7 +49,7 @@ function rating(){
      $fid_pengguna = $data['fid_pengguna'];
      $modul = $data['modul'];
      $fid_modul = $data['fid_modul'];
-      $sql="SELECT * FROM data_rating a JOIN data_pengguna b ON a.fid_pengguna = b.id_pengguna WHERE fid_pengguna='$fid_pengguna' AND modul='$modul' AND fid_modul='$fid_modul' ORDER BY id_rating*1 DESC";
+      $sql="SELECT * FROM data_rating a JOIN data_pengguna b ON a.fid_pengguna = b.id_pengguna WHERE modul='$modul' AND fid_modul='$fid_modul' ORDER BY id_rating*1 DESC";
 
      $arr = $this->db->query($sql)->result();
     echo json_encode($arr);
