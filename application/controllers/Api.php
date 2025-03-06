@@ -203,6 +203,9 @@ function tambah_pengalaman(){
       
 }
 
+
+
+
  function santri(){
     $data = json_decode(file_get_contents('php://input'), true);
     $fid_kamar = $data['fid_kamar'];
@@ -2063,6 +2066,65 @@ function order_add(){
 
 // UPDATE PROFILE
 // UPDATE PROFILE
+
+function update_pengalaman(){
+    $data = json_decode(file_get_contents('php://input'), true);
+
+
+        $foto_user = $data['newgambar'];
+        $old_foto_user = $data['gambar'];
+
+        
+        
+         if(strlen($foto_user) > 250){
+              
+            
+                $path_user = sha1(date('ymdhis'))."_experience.png";
+                list($foto_user, $foto_user) = explode(';base64', $foto_user);
+                list(, $foto_user) = explode(',', $foto_user);
+                $foto_user = base64_decode($foto_user);
+                file_put_contents('./datafoto/'.$path_user, $foto_user);
+                $input_user = site_url().'datafoto/'.$path_user;
+                
+             
+                 
+                if($data['gambar']!="https://zavalabs.com/nogambar.jpg"){
+                  error_reporting(0);
+                 unlink(str_replace(site_url(),"",$old_foto_user));
+                }
+                
+        }else{
+            $input_user = $data['gambar'];
+        }
+    
+        
+        $link_youtube = $data['link_youtube'];
+        $deskripsi = $data['deskripsi'];
+        $id_pengalaman = $data['id_pengalaman'];
+        
+        
+        $sql="UPDATE data_pengalaman SET
+
+            gambar='$input_user',
+            link_youtube='$link_youtube',
+            deskripsi='$deskripsi'
+
+
+            WHERE id_pengalaman='$id_pengalaman'";
+       
+       
+       $this->db->query($sql);
+       
+ 
+          echo json_encode(array("status"=>200,"message"=>"Pengalaman berhasil diupdate !"));
+    
+
+     
+        
+      
+}
+
+
 function update_profile(){
     $data = json_decode(file_get_contents('php://input'), true);
     
